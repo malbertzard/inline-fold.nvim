@@ -21,6 +21,7 @@ Plug 'malbertzard/inlin-fold.nvim'
 ## Usage
 Once installed, the plugin provides the following functionality:
 
+The command *ToggleInlineFold*
 
 ## Todo List
  - [ ] Check performance for large files.
