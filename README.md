@@ -1,45 +1,33 @@
-# A Neovim Plugin Template
+# Inlin-fold.nvim
 
-![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/ellisonleao/nvim-plugin-template/default.yml?branch=main&style=for-the-badge)
-![Lua](https://img.shields.io/badge/Made%20with%20Lua-blueviolet.svg?style=for-the-badge&logo=lua)
+`inlin-fold.nvim` is a Neovim plugin inspired by the vscode plugin `inline-fold`. It provides a convenient way to make complex CSS classes, especially those with Tailwind CSS, more readable by folding the class content and displaying a placeholder.
 
-A template repository for Neovim plugins.
+## Features
 
-## Using it
+- Toggle folding of the content within CSS class attributes.
+- Replace the folded content with a placeholder (e.g., three dots) for improved readability.
+- Automatic restoration of the original content on file save, exit, or VimLeavePre event.
 
-Via `gh`:
+## Installation
 
+Use your preferred plugin manager to install `inlin-fold.nvim`.
+
+### Plug
+
+```vim
+Plug 'malbertzard/inlin-fold.nvim'
 ```
-$ gh repo create my-plugin -p ellisonleao/nvim-plugin-template
-```
 
-Via github web page:
+## Usage
+Once installed, the plugin provides the following functionality:
 
-Click on `Use this template`
 
-![](https://docs.github.com/assets/cb-36544/images/help/repository/use-this-template-button.png)
+## Todo List
+ - [ ] Check performance for large files.
+ - [ ] Add customizability options for the placeholder character.
+ - [ ] Add command to reveal just current line
+ - [ ] Automaticy reveal if cursor enters placeholder
 
-## Features and structure
+## License
+This project is licensed under the MIT License.
 
-- 100% Lua
-- Github actions to run tests and check for formatting errors (Stylua)
-- Tests created with [busted](https://olivinelabs.com/busted/) + [plenary.nvim](https://github.com/nvim-lua/plenary.nvim)
-- luarocks release support (LUAROCKS_API_KEY secret configuration required)
-
-### Plugin structure
-
-```
-.
-├── lua
-│   ├── plugin_name
-│   │   └── module.lua
-│   └── plugin_name.lua
-├── Makefile
-├── plugin
-│   └── plugin_name.lua
-├── README.md
-├── tests
-│   ├── minimal_init.lua
-│   └── plugin_name
-│       └── plugin_name_spec.lua
-```
