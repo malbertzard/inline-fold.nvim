@@ -10,12 +10,12 @@
 
 ## Installation
 
-Use your preferred plugin manager to install `inlin-fold.nvim`.
+Use your preferred plugin manager to install `inline-fold.nvim`.
 
 ### Plug
 
 ```vim
-Plug 'malbertzard/inlin-fold.nvim'
+Plug 'malbertzard/inline-fold.nvim'
 ```
 
 ## Usage
