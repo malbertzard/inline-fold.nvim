@@ -1,56 +1,91 @@
 local M = {}
 
--- Store the current hide state
 local hide = false
+local original_classes = {}
+local tick_values = {}
 
--- Store the original line values
-local original_lines = {}
+local function find_class(line_content)
+    local start_pos, end_pos, class_value = string.find(line_content, 'class="([^"]*)"')
+    return start_pos, end_pos, class_value
+end
 
-function M.toggle_hide()
-    hide = not hide
+local function store_original_class(bufnr, line, class_value)
+    if not original_classes[bufnr] then
+        original_classes[bufnr] = {}
+    end
+    original_classes[bufnr][line] = class_value
+end
 
-    local bufnr = vim.api.nvim_get_current_buf()
+local function restore_original_class(bufnr, line)
+    local original_class = original_classes[bufnr] and original_classes[bufnr][line]
+    if original_class then
+        original_classes[bufnr][line] = nil
+        return original_class
+    end
+    return nil
+end
+
+local function generate_tag_id(bufnr, line)
+    return bufnr .. ":" .. line
+end
+
+local function update_buffer(bufnr)
+    local tick = vim.api.nvim_buf_get_changedtick(bufnr)
+
+    if tick_values[bufnr] and tick_values[bufnr] == tick then
+        -- No changes in the buffer, no need to update
+        return
+    end
+
+    tick_values[bufnr] = tick
+
     vim.api.nvim_buf_clear_namespace(bufnr, -1, 0, -1)
 
     local line_count = vim.api.nvim_buf_line_count(bufnr)
+
     for line = 1, line_count do
         local line_content = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1]
 
-        -- Find the class attribute and its value
-        local start_pos, end_pos, class_value = string.find(line_content, 'class="([^"]*)"')
+        local start_pos, end_pos, class_value = find_class(line_content)
 
         if start_pos and end_pos then
-            if hide then
-                -- Store the original line value
-                original_lines[vim.api.nvim_buf_get_name(bufnr) .. ':' .. line] = line_content
-                local new_line = line_content:gsub('class="[^"]+"', 'class="..."')
+            local tag_id = generate_tag_id(bufnr, line)
 
+            if hide then
+                store_original_class(bufnr, tag_id, class_value)
+                local new_line = line_content:gsub('class="[^"]+"', 'class="..."')
                 vim.api.nvim_buf_set_lines(bufnr, line - 1, line, false, { new_line })
             else
-                -- Restore the original class value
-                local original_line = original_lines[vim.api.nvim_buf_get_name(bufnr) .. ':' .. line]
-                if original_line then
-                    -- Update the line with the original content
-                    vim.api.nvim_buf_set_lines(bufnr, line - 1, line, false, { original_line })
+                local original_class = restore_original_class(bufnr, tag_id)
+                if original_class then
+                    local new_line = line_content:gsub('class="..."', 'class="' .. original_class .. '"')
+                    vim.api.nvim_buf_set_lines(bufnr, line - 1, line, false, { new_line })
                 end
             end
         end
     end
 end
 
--- Function to restore original line values on file save, exit, or VimLeavePre
-local function restore_original_lines()
-    for key, line_content in pairs(original_lines) do
-        local file, line_number = key:match('(.*):(%d+)')
-        if vim.fn.filereadable(file) == 1 then
-            local bufnr = vim.fn.bufnr(file)
-            if bufnr ~= -1 then
-                vim.api.nvim_buf_set_lines(bufnr, tonumber(line_number) - 1, tonumber(line_number), false,
-                    { line_content })
-            end
-        end
-    end
-    original_lines = {}
+function M.toggle_hide()
+    hide = not hide
+
+    local bufnr = vim.api.nvim_get_current_buf()
+    update_buffer(bufnr)
+end
+
+function M.restore_classes()
+    local bufnr = vim.api.nvim_get_current_buf()
+    
+    hide = false
+    update_buffer(bufnr)
+end
+
+function M.rehide_classes()
+    local bufnr = vim.api.nvim_get_current_buf()
+
+    hide = true
+    update_buffer(bufnr)
 end
 
 return M
+
