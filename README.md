@@ -37,6 +37,3 @@ Once installed, the plugin provides the following functionality:
 
 This project is licensed under the MIT License.
 
----
-
-I hope this updated version with UTF emojis adds a touch of fun to the documentation! If you have any further questions, feel free to ask.
