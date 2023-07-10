@@ -3,13 +3,14 @@
 `inline-fold.nvim` is a Neovim plugin inspired by the vscode plugin `inline-fold`. It provides a convenient way to make complex CSS classes, especially those with Tailwind CSS, more readable by folding the class content and displaying a placeholder.
 
 
-!! Currently has problems with line number changes WIP
+!! Now uses conceal. Needs to be reused on every change to the class field
+
+!! Doesnt work for multiline classes
 
 ## Features
 
 - Toggle folding of the content within CSS class attributes.
-- Replace the folded content with a placeholder (e.g., three dots) for improved readability.
-- Automatic restoration of the original content on file save, exit, or VimLeavePre event.
+- Replace the folded content with a placeholder (*) for improved readability.
 
 ## Installation
 
@@ -26,14 +27,11 @@ Once installed, the plugin provides the following functionality:
 
 The commands:
 - *InlineFoldToggle*
-- *InlineFoldShow*
-- *InlineFoldHide*
 
 ## Todo List
- - [ ] Check performance for large files.
+ - [x] Check performance for large files.
  - [ ] Add customizability options for the placeholder character.
- - [ ] Add command to reveal just current line
- - [ ] Automaticy reveal if cursor enters placeholder
+ - [x] Automaticy reveal if cursor enters placeholder
 
 ## License
 This project is licensed under the MIT License.

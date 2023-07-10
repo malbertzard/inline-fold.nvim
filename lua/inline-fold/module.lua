@@ -1,7 +1,6 @@
 local M = {}
 
 local hide = false
-local original_classes = {}
 
 local function find_class(line_content)
     local start_pos, end_pos, class_value = string.find(line_content, 'class="([^"]*)"')
