@@ -10,7 +10,7 @@ end
 
 local function create_conceal(text)
     local syntax_group = "InlineFold" -- Name of the syntax group
-    local conceal_char = "*" -- Character to use for concealment
+    local conceal_char = "***" -- Character to use for concealment
 
     -- Define the syntax group
     vim.cmd("syntax match " .. syntax_group .. " /" .. text .. "/ conceal cchar=" .. conceal_char)
@@ -24,9 +24,19 @@ local function create_conceal(text)
     end)
 end
 
-local function update_buffer(bufnr)
-    local tick = vim.api.nvim_buf_get_changedtick(bufnr)
+local function remove_conceal()
+    local syntax_group = "InlineFold" -- Name of the syntax group
 
+    -- Clear the syntax group
+    vim.cmd("syntax clear " .. syntax_group)
+
+    -- Refresh the buffer to remove the concealment
+    vim.api.nvim_buf_call(0, function()
+        vim.cmd("syntax sync fromstart")
+    end)
+end
+
+local function update_buffer(bufnr)
     vim.api.nvim_buf_clear_namespace(bufnr, -1, 0, -1)
 
     local line_count = vim.api.nvim_buf_line_count(bufnr)
@@ -40,6 +50,7 @@ local function update_buffer(bufnr)
             if hide then
                 create_conceal(class_value)
             else
+                remove_conceal()
             end
         end
     end
