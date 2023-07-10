@@ -10,7 +10,7 @@ end
 
 local function create_conceal(text)
     local syntax_group = "InlineFold" -- Name of the syntax group
-    local conceal_char = "***" -- Character to use for concealment
+    local conceal_char = "*" -- Character to use for concealment
 
     -- Define the syntax group
     vim.cmd("syntax match " .. syntax_group .. " /" .. text .. "/ conceal cchar=" .. conceal_char)
@@ -56,10 +56,18 @@ local function update_buffer(bufnr)
     end
 end
 
+local function set_conceal_level(bufnr)
+  local cmd = string.format("setlocal conceallevel=2")
+  vim.api.nvim_buf_call(bufnr, function()
+    vim.api.nvim_command(cmd)
+  end)
+end
+
 function M.toggle_hide()
     hide = not hide
 
     local bufnr = vim.api.nvim_get_current_buf()
+    set_conceal_level(bufnr)
     update_buffer(bufnr)
 end
 
