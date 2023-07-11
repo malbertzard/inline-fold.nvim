@@ -3,7 +3,7 @@ local module = require("inline-fold.module")
 
 local M = {}
 M.config = {
-  placeholder = "*",
+  placeholder = "…",
 }
 
 -- setup is the public method to setup your plugin
