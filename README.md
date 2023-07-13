@@ -15,8 +15,15 @@ Use your preferred plugin manager to install `inline-fold.nvim`.
 
 ### Plug
 
-```
-Plug 'malbertzard/inline-fold.nvim'
+```lua
+{
+  "malbertzard/inline-fold.nvim",
+
+  -- Optional
+  opts = {
+    placeholder = "…", -- Add here your char NO STRING
+  }
+}
 ```
 
 ## Usage
@@ -29,9 +36,9 @@ Once installed, the plugin provides the following functionality:
 
 ### Todo List 📝
 
-- Check performance for large files.
-- Add customizability options for the placeholder character.
-- Automatically reveal if the cursor enters the placeholder.
+- [x] Check performance for large files.
+- [x] Add customizability options for the placeholder character.
+- [x] Automatically reveal if the cursor enters the placeholder.
 
 ## License
 
