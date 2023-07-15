@@ -1,21 +1,22 @@
+-- module file (inline-fold.module)
 local M = {}
 
-local hide = false
+local isHidden = false
 
-local function find_class(line_content)
-  local start_pos, end_pos, class_value = string.find(line_content, 'class="([^"]*)"')
-  return start_pos, end_pos, class_value
+local function findQueryMatches(lineContent, query)
+  local start, stop, match = string.find(lineContent, query.pattern)
+  return start, stop, match
 end
 
-local function create_conceal(text, placeholder)
-  local syntax_group = "InlineFold" -- Name of the syntax group
-  local conceal_char = placeholder
+local function createConcealMatch(text, placeholder)
+  local syntaxGroup = "InlineFold" -- Name of the syntax group
+  local concealChar = placeholder
 
-  -- Define the syntax group
-  vim.cmd("syntax match " .. syntax_group .. " /" .. text .. "/ conceal cchar=" .. conceal_char)
+  -- Define the syntax group and conceal the match
+  vim.cmd("syntax match " .. syntaxGroup .. " /" .. text .. "/ conceal cchar=" .. concealChar)
 
   -- Set the concealment options
-  vim.cmd("highlight! link " .. syntax_group .. " Conceal")
+  vim.cmd("highlight! link " .. syntaxGroup .. " Conceal")
 
   -- Refresh the buffer to apply the concealment
   vim.api.nvim_buf_call(0, function()
@@ -23,11 +24,11 @@ local function create_conceal(text, placeholder)
   end)
 end
 
-local function remove_conceal()
-  local syntax_group = "InlineFold" -- Name of the syntax group
+local function removeConcealment()
+  local syntaxGroup = "InlineFold" -- Name of the syntax group
 
   -- Clear the syntax group
-  vim.cmd("syntax clear " .. syntax_group)
+  vim.cmd("syntax clear " .. syntaxGroup)
 
   -- Refresh the buffer to remove the concealment
   vim.api.nvim_buf_call(0, function()
@@ -35,39 +36,51 @@ local function remove_conceal()
   end)
 end
 
-local function update_buffer(bufnr, placeholder)
+local function updateBuffer(bufnr, filetype, queries, defaultPlaceholder)
   vim.api.nvim_buf_clear_namespace(bufnr, -1, 0, -1)
 
-  local line_count = vim.api.nvim_buf_line_count(bufnr)
+  local lineCount = vim.api.nvim_buf_line_count(bufnr)
 
-  for line = 1, line_count do
-    local line_content = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1]
+  local filetypeQueries = queries[filetype] -- Get filetype-specific queries
 
-    local start_pos, end_pos, class_value = find_class(line_content)
+  if not filetypeQueries then
+    return
+  end
 
-    if start_pos and end_pos then
-      if hide then
-        create_conceal(class_value, placeholder)
-      else
-        remove_conceal()
+  for line = 1, lineCount do
+    local lineContent = vim.api.nvim_buf_get_lines(bufnr, line - 1, line, false)[1]
+
+    for _, query in ipairs(filetypeQueries) do
+      local start, stop, match = findQueryMatches(lineContent, query)
+
+      if start and stop then
+        local placeholder = query.placeholder or defaultPlaceholder
+
+        if isHidden then
+          createConcealMatch(match, placeholder)
+        else
+          removeConcealment()
+        end
       end
     end
   end
 end
 
-local function set_conceal_level(bufnr)
+local function setConcealLevel(bufnr)
   local cmd = string.format("setlocal conceallevel=2")
   vim.api.nvim_buf_call(bufnr, function()
     vim.api.nvim_command(cmd)
   end)
 end
 
-function M.toggle_hide(conf)
-  hide = not hide
+function M.toggleHide(conf)
+  isHidden = not isHidden
 
   local bufnr = vim.api.nvim_get_current_buf()
-  set_conceal_level(bufnr)
-  update_buffer(bufnr, conf.placeholder)
+  local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype") -- Get the current filetype
+  setConcealLevel(bufnr)
+  updateBuffer(bufnr, filetype, conf.queries, conf.defaultPlaceholder)
 end
 
 return M
+
