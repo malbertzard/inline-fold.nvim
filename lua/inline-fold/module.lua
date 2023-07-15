@@ -83,4 +83,3 @@ function M.toggleHide(conf)
 end
 
 return M
-
