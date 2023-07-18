@@ -1,13 +1,15 @@
 # inline-fold.nvim
 
-`inline-fold.nvim` is a Neovim plugin inspired by the vscode plugin `inline-fold`. It provides a convenient way to make complex CSS classes, especially those with Tailwind CSS, more readable by folding the class content and displaying a placeholder.
+`inline-fold.nvim` is a Neovim plugin inspired by the vscode plugin `inline-fold`. It provides a convenient way to define patterns in files that get concealed inline. This can be used for many things for example for CSS classes in HTML files especially with TailwindCSS
 
-**Note: The plugin now uses conceal and needs to be reapplied on every change to the class field. It also doesn't work for multiline classes.**
+**Note: It doesn't work for multiline patterns.**
 
 ## Features ✨
 
-- Toggle folding of the content within CSS class attributes. ↔️
-- Replace the folded content with a placeholder (*) for improved readability.
+- Toggle folding of the content
+- Replace the folded content with a placeholder for improved readability.
+- Placeholder can be defined by the user per pattern
+- pattern can be easily added
 
 ## Installation 💻
 
@@ -19,9 +21,17 @@ Use your preferred plugin manager to install `inline-fold.nvim`.
 {
   "malbertzard/inline-fold.nvim",
 
-  -- Optional
   opts = {
-    placeholder = "…", -- Add here your char NO STRING
+    defaultPlaceholder = "…",
+    queries = {
+
+      -- Some examples you can use
+      html = {
+        { pattern = 'class="([^"]*)"', placeholder = "@" }, -- classes in html
+        { pattern = 'href="(.-)"' }, -- hrefs in html
+        { pattern = 'src="(.-)"' }, -- HTML img src attribute
+      }
+    },
   }
 }
 ```
@@ -36,9 +46,9 @@ Once installed, the plugin provides the following functionality:
 
 ### Todo List 📝
 
-- [x] Check performance for large files.
-- [x] Add customizability options for the placeholder character.
-- [x] Automatically reveal if the cursor enters the placeholder.
+- [ ] Check if moving to Treesitter is viable
+- [ ] Create some sub commands for updating and removing conceals
+- [ ] Record showcase
 
 ## License
 

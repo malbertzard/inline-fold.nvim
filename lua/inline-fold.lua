@@ -3,7 +3,8 @@ local module = require("inline-fold.module")
 
 local M = {}
 M.config = {
-  placeholder = "…",
+  defaultPlaceholder = "…",
+  queries = {},
 }
 
 -- setup is the public method to setup your plugin
@@ -12,7 +13,8 @@ M.setup = function(args)
 end
 
 M.toggle = function()
-  module.toggle_hide(M.config)
+  M.setup()
+  module.toggleHide(M.config)
 end
 
 return M
