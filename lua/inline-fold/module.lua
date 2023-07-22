@@ -8,6 +8,28 @@ local function findQueryMatches(lineContent, query)
   return start, stop, match
 end
 
+local function prefixSpecialCharacters(inputString)
+  local specialCharacters = {
+    ["["] = true,
+    ["]"] = true,
+    ["{"] = true,
+    ["}"] = true,
+    ["/"] = true,
+  }
+
+  local result = ""
+  for i = 1, #inputString do
+    local char = inputString:sub(i, i)
+    if specialCharacters[char] then
+      result = result .. "\\" .. char
+    else
+      result = result .. char
+    end
+  end
+
+  return result
+end
+
 local function createConcealMatch(text, placeholder)
   local syntaxGroup = "InlineFold" -- Name of the syntax group
   local concealChar = placeholder
@@ -57,6 +79,7 @@ local function updateBuffer(bufnr, filetype, queries, defaultPlaceholder)
         local placeholder = query.placeholder or defaultPlaceholder
 
         if isHidden then
+          match = prefixSpecialCharacters(match)
           createConcealMatch(match, placeholder)
         else
           removeConcealment()
