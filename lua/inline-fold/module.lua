@@ -30,7 +30,6 @@ local function prefixSpecialCharacters(inputString)
   return result
 end
 
-
 local function createConcealMatch(text, placeholder)
   local syntaxGroup = "InlineFold" -- Name of the syntax group
   local concealChar = placeholder
