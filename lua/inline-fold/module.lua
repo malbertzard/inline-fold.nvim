@@ -1,7 +1,7 @@
 -- module file (inline-fold.module)
-local M = {}
-
-local isHidden = false
+local M = {
+  isHidden = false,
+}
 
 local function findQueryMatches(lineContent, query)
   local start, stop, match = string.find(lineContent, query.pattern)
@@ -78,7 +78,7 @@ local function updateBuffer(bufnr, filetype, queries, defaultPlaceholder)
       if start and stop then
         local placeholder = query.placeholder or defaultPlaceholder
 
-        if isHidden then
+        if M.isHidden then
           match = prefixSpecialCharacters(match)
           createConcealMatch(match, placeholder)
         else
@@ -97,7 +97,7 @@ local function setConcealLevel(bufnr)
 end
 
 function M.toggleHide(conf)
-  isHidden = not isHidden
+  M.isHidden = not M.isHidden
 
   local bufnr = vim.api.nvim_get_current_buf()
   local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype") -- Get the current filetype
