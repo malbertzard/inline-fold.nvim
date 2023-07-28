@@ -44,8 +44,9 @@ Once installed, the plugin provides the following functionality:
 
 - `InlineFoldToggle`: Toggles the folding of the content within CSS class attributes.
 
-### Envoke `InlineFoldToggle` via `autocmd`
+### Call `InlineFoldToggle` via `autocmd`
 
+Add the following snippet to your configurations to call `InlineFoldToggle` automatically based on filename patterns.
 ```lua
 vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
   pattern = { '*.html', '*.tsx' },
