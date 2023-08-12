@@ -77,13 +77,8 @@ local function updateBuffer(bufnr, filetype, queries, defaultPlaceholder)
 
       if start and stop then
         local placeholder = query.placeholder or defaultPlaceholder
-
-        if M.isHidden then
-          match = prefixSpecialCharacters(match)
-          createConcealMatch(match, placeholder)
-        else
-          removeConcealment()
-        end
+        match = prefixSpecialCharacters(match)
+        createConcealMatch(match, placeholder)
       end
     end
   end
@@ -98,11 +93,14 @@ end
 
 function M.toggleHide(conf)
   M.isHidden = not M.isHidden
-
-  local bufnr = vim.api.nvim_get_current_buf()
-  local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype") -- Get the current filetype
-  setConcealLevel(bufnr)
-  updateBuffer(bufnr, filetype, conf.queries, conf.defaultPlaceholder)
+  if M.isHidden then
+    local bufnr = vim.api.nvim_get_current_buf()
+    local filetype = vim.api.nvim_buf_get_option(bufnr, "filetype") -- Get the current filetype
+    setConcealLevel(bufnr)
+    updateBuffer(bufnr, filetype, conf.queries, conf.defaultPlaceholder)
+  else
+    removeConcealment()
+  end
 end
 
 return M
